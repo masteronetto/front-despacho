@@ -30,6 +30,8 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest
+            docker pull daniel0netto/front-despacho:latest
             cd /home/ec2-user/front-despacho
-            docker-compose up -d --force-recreate
+            docker stop front-despacho || true
+            docker rm front-despacho || true
+            docker run -d --name front-despacho -p 80:80 daniel0netto/front-despacho:latest
