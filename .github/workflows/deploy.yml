@@ -32,4 +32,4 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest
             cd /home/ec2-user/front-despacho
-            docker compose up -d --force-recreate
+            docker-compose up -d --force-recreate
