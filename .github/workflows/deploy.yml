@@ -1,0 +1,35 @@
+name: CI/CD front-despacho
+
+on:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Login a Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build y Push imagen
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest
+
+      - name: Deploy en EC2 Frontend
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest
+            cd /home/ec2-user/front-despacho
+            docker compose up -d --force-recreate
