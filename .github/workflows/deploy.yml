@@ -31,6 +31,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo docker pull daniel0netto/front-despacho:latest
-            sudo docker stop front-despacho || true
-            sudo docker rm front-despacho || true
-            sudo docker run -d --name front-despacho -p 80:80 daniel0netto/front-despacho:latest
+            sudo docker rm -f front-despacho 2>/dev/null || true
+            sudo docker run --detach --name front-despacho --publish 80:80 daniel0netto/front-despacho:latest
